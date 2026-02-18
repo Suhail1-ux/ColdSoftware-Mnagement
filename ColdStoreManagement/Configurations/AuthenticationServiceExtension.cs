@@ -37,10 +37,10 @@ namespace ColdStoreManagement.Configurations
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["JWT:ValidIssuer"],
-                    ValidAudience = configuration["JWT:ValidAudience"],
+                    ValidIssuer = configuration["JWTConfigs:ValidIssuer"],
+                    ValidAudience = configuration["JWTConfigs:ValidAudience"],
 #pragma warning disable CS8604 // Possible null reference argument.
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTConfigs:Secret"])),
 #pragma warning restore CS8604 // Possible null reference argument.
 
                     ClockSkew = TimeSpan.Zero,
