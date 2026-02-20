@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace ColdStoreManagement.BLL.Errors
 {
@@ -7,7 +8,7 @@ namespace ColdStoreManagement.BLL.Errors
         public APIException(int statusCode, string? message = null, string? details = null)
         {
             StatusCode = statusCode;
-            Message = message ?? DefaultStatusCodeMessage(statusCode); ;
+            Message = message ?? DefaultStatusCodeMessage(statusCode);
             Details = details;
         }
         public string? Details { get; set; } // Stack trace or other details
@@ -36,4 +37,35 @@ namespace ColdStoreManagement.BLL.Errors
             );
         }
     }
+
+    public abstract class AppException : Exception
+    {
+        public int StatusCode { get; }
+
+        protected AppException(string message, int statusCode)
+            : base(message)
+        {
+            StatusCode = statusCode;
+        }
+    }
+
+    public sealed class BadRequestException : AppException
+    {
+        public BadRequestException(string message)
+            : base(message, StatusCodes.Status400BadRequest) { }
+    }
+
+    public sealed class NotFoundException : AppException
+    {
+        public NotFoundException(string message)
+            : base(message, StatusCodes.Status404NotFound) { }
+    }
+
+    public sealed class UnauthorizedException : AppException
+    {
+        public UnauthorizedException(string message)
+            : base(message, StatusCodes.Status401Unauthorized) { }
+    }
+
+
 }

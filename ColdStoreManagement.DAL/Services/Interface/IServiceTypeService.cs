@@ -4,13 +4,14 @@ namespace ColdStoreManagement.DAL.Services.Interface
 {
     public interface IServiceTypeService
     {
-        Task<bool> AddService(CompanyModel model);
-        Task<bool> UpdateService(int id, CompanyModel model);
-        Task<bool> DeleteService(int id);
         Task<bool> DoesServiceExistAsync(string serviceName);
+        Task<List<ServiceTypesModel>> GetServices();
+        Task<List<ServiceTypesModel>> GetServicesFromAgreement(string selectedPurchase);
+        Task<List<ServiceTypesModel>> GetAllServices();
+        Task<ServiceTypesModel?> GetServiceById(int id);
 
-        Task<List<CompanyModel>> GetServices();
-        Task<List<CompanyModel>> GetServicesFromAgreement(string selectedPurchase);
-        Task<List<CompanyModel>> GetAllServices();
+        Task<bool> AddService(ServiceTypesModel model);
+        Task<bool> UpdateService(int id, ServiceTypesModel model);
+        Task<bool> DeleteService(int id); 
     }
 }

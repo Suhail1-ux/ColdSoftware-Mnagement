@@ -1,4 +1,5 @@
-﻿using ColdStoreManagement.BLL.Models;
+﻿using ColdStoreManagement.BLL.Models.Company;
+using ColdStoreManagement.BLL.Models.Crate;
 
 namespace ColdStoreManagement.DAL.Services.Interface
 {
@@ -12,8 +13,8 @@ namespace ColdStoreManagement.DAL.Services.Interface
 
         // ========= Crate Flag =========
         Task<bool> DoesCrateFlagExistAsync(string name);
-        Task<bool> AddCrateFlagAsync(CompanyModel model);
-        Task<bool> UpdateCrateFlagAsync(CompanyModel model);
+        Task<bool> AddCrateFlagAsync(CrateFlags model);
+        Task<bool> UpdateCrateFlagAsync(CrateFlags model);
         Task<bool> DeleteCrateFlagAsync(int id);
 
         // ========= Issue / Transaction =========

@@ -21,6 +21,8 @@ namespace ColdStoreManagement.DAL.Helper
                 : connectionString;
         }
 
+
+
         #region ---------- Core Helpers ----------
 
         /// <summary>
@@ -67,7 +69,9 @@ namespace ColdStoreManagement.DAL.Helper
             }
         }
 
-        private static void PrepareCommand(SqlCommand command, SqlConnection connection, SqlTransaction transaction, CommandType commandType, string commandText, SqlParameter[] commandParameters, out bool mustCloseConnection)
+        private static void PrepareCommand(SqlCommand command, SqlConnection connection, 
+            SqlTransaction transaction, CommandType commandType, string commandText,
+            SqlParameter[] commandParameters, out bool mustCloseConnection)
         {
             ArgumentNullException.ThrowIfNull(command);
             ArgumentNullException.ThrowIfNull(commandText);
@@ -115,22 +119,39 @@ namespace ColdStoreManagement.DAL.Helper
             return await ExecuteNonQueryAsync(commandType, commandText, (SqlParameter[])null);
         }
 
-        public async Task<int> ExecuteNonQueryAsync(CommandType commandType, string commandText, params SqlParameter[] commandParameters)
+        public async Task<int> ExecuteNonQueryAsync(CommandType commandType, string commandText, 
+            params SqlParameter[] commandParameters)
         {
             if (string.IsNullOrEmpty(_connectionString))
                 throw new ArgumentNullException(nameof(_connectionString));
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync(); // ✅ Use OpenAsync() for non-blocking connection
+            await connection.OpenAsync(); // Use OpenAsync() for non-blocking connection
 
             return await ExecuteNonQueryAsync(connection, commandType, commandText, commandParameters);
         }
+        public async Task<int> ExecuteNonQueryAsync(CommandType commandType, string sql,
+           SqlTransaction transaction, params SqlParameter[] parameters)
+        {
+            using var cmd = new SqlCommand(sql, transaction.Connection!, transaction)
+            {
+                CommandType = commandType
+            };
 
-        public static async Task<int> ExecuteNonQueryAsync(SqlConnection connection, CommandType commandType, string commandText)
+            if (parameters?.Length > 0)
+                cmd.Parameters.AddRange(parameters);
+
+            return await cmd.ExecuteNonQueryAsync();
+        }
+
+
+        public static async Task<int> ExecuteNonQueryAsync(SqlConnection connection, 
+            CommandType commandType, string commandText)
         {
             return await ExecuteNonQueryAsync(connection, commandType, commandText, (SqlParameter[])null);
         }
-        private static async Task<int> ExecuteNonQueryAsync(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
+        private static async Task<int> ExecuteNonQueryAsync(SqlConnection connection,
+            CommandType commandType, string commandText, params SqlParameter[] commandParameters)
         {
             if (connection == null)
                 throw new ArgumentNullException(nameof(connection));
@@ -148,10 +169,11 @@ namespace ColdStoreManagement.DAL.Helper
                 }
             }
 
-            return await cmd.ExecuteNonQueryAsync(); // ✅ Use ExecuteNonQueryAsync()
+            return await cmd.ExecuteNonQueryAsync();
         }
 
-        public static async Task<int> ExecuteNonQueryAsync(SqlTransaction transaction, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
+        public static async Task<int> ExecuteNonQueryAsync(SqlTransaction transaction,
+            CommandType commandType, string commandText, params SqlParameter[] commandParameters)
         {
             if (transaction == null || transaction.Connection == null)
                 throw new ArgumentException("Transaction is null or has been committed/rolled back.", nameof(transaction));
@@ -176,9 +198,7 @@ namespace ColdStoreManagement.DAL.Helper
 
         #region ---------- ExecuteScalar ----------
 
-        public async Task<object?> ExecuteScalarAsync(
-            string commandText,
-            CommandType commandType,
+        public async Task<object?> ExecuteScalarAsync(string commandText, CommandType commandType,
             params SqlParameter[] commandParameters)
         {
             await using var connection = new SqlConnection(_connectionString);
@@ -199,9 +219,7 @@ namespace ColdStoreManagement.DAL.Helper
 
             return await cmd.ExecuteScalarAsync();
         }
-        public async Task<T?> ExecuteScalarAsync<T>(
-            string commandText,
-            CommandType commandType,
+        public async Task<T?> ExecuteScalarAsync<T>(string commandText, CommandType commandType,
             params SqlParameter[]? commandParameters)
         {
             await using var connection = new SqlConnection(_connectionString);
@@ -241,19 +259,26 @@ namespace ColdStoreManagement.DAL.Helper
 
 
         #region ---------- ExecuteReader (Generic) ----------
-        public async Task<T?> ExecuteSingleAsync<T>(
-             string commandText,
-             CommandType commandType,
+        /// <summary>
+        /// Execute a query and return the first result without parameters
+        /// </summary>
+        public async Task<T?> ExecuteSingleAsync<T>(string commandText, CommandType commandType) where T : new()
+        {
+            return await ExecuteSingleAsync<T>(commandText, commandType, parameters: null);
+        }
+
+        /// <summary>
+        /// Execute a query and return the first result with optional parameters
+        /// </summary>
+        public async Task<T?> ExecuteSingleAsync<T>(string commandText, CommandType commandType,
              params SqlParameter[] parameters)
              where T : new()
         {
             var list = await ExecuteReaderAsync<T>(commandText, commandType, parameters);
-            return list.FirstOrDefault();
+            return list != null ? list.FirstOrDefault() : default;
         }
 
-        public async Task<List<T>> ExecuteReaderAsync<T>(
-             string commandText,
-             CommandType commandType,
+        public async Task<List<T>> ExecuteReaderAsync<T>(string commandText, CommandType commandType,
              params SqlParameter[] parameters)
              where T : new()
         {
@@ -323,14 +348,17 @@ namespace ColdStoreManagement.DAL.Helper
 
 
         #region ExecuteDataset
-        public async Task<DataSet> ExecuteDatasetAsync(CommandType commandType, string commandText, params SqlParameter[] commandParameters)
+        public async Task<DataSet> ExecuteDatasetAsync(CommandType commandType, string commandText, 
+            params SqlParameter[] commandParameters)
         {
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
             await connection.OpenAsync();
             return await ExecuteDatasetAsync(connection, commandType, commandText, commandParameters);
         }
-        public static async Task<DataSet> ExecuteDatasetAsync(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
+        public static async Task<DataSet> ExecuteDatasetAsync(SqlConnection connection, 
+            CommandType commandType, string commandText, 
+            params SqlParameter[] commandParameters)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
 
@@ -364,18 +392,22 @@ namespace ColdStoreManagement.DAL.Helper
                 return await ExecuteDatasetAsync(_connectionString, CommandType.StoredProcedure, spName);
             }
         }
-        public static async Task<DataSet> ExecuteDatasetAsync(SqlConnection connection, CommandType commandType, string commandText)
+        public static async Task<DataSet> ExecuteDatasetAsync(SqlConnection connection, 
+            CommandType commandType, string commandText)
         {
             return await ExecuteDatasetAsync(connection, commandType, commandText, (SqlParameter[])null);
         }
 
 
-        public static async Task<DataSet> ExecuteDatasetAsync(SqlTransaction transaction, CommandType commandType, string commandText)
+        public static async Task<DataSet> ExecuteDatasetAsync(SqlTransaction transaction, 
+            CommandType commandType, string commandText)
         {
             return await ExecuteDatasetAsync(transaction, commandType, commandText, (SqlParameter[])null);
         }
 
-        private static async Task<DataSet> ExecuteDatasetAsync(SqlTransaction transaction, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
+        private static async Task<DataSet> ExecuteDatasetAsync(SqlTransaction transaction, 
+            CommandType commandType, string commandText,
+            params SqlParameter[] commandParameters)
         {
             if (transaction == null || transaction.Connection == null) throw new ArgumentException("The transaction is not valid or has been committed/rolled back.", nameof(transaction));
 
@@ -394,7 +426,8 @@ namespace ColdStoreManagement.DAL.Helper
             }
         }
 
-        public static async Task<DataSet> ExecuteDatasetAsync(SqlTransaction transaction, string spName, params object[] parameterValues)
+        public static async Task<DataSet> ExecuteDatasetAsync(SqlTransaction transaction, 
+            string spName, params object[] parameterValues)
         {
             if (transaction == null || transaction.Connection == null) throw new ArgumentException("The transaction is not valid or has been committed/rolled back.", nameof(transaction));
             if (string.IsNullOrEmpty(spName)) throw new ArgumentNullException(nameof(spName));
@@ -429,7 +462,8 @@ namespace ColdStoreManagement.DAL.Helper
             /// <param name="spName">The name of the stored procedure</param>
             /// <param name="includeReturnValueParameter">Whether or not to include their return value parameter</param>
             /// <returns>The parameter array discovered.</returns>
-            private static SqlParameter[] DiscoverSpParameterSet(SqlConnection connection, string spName, bool includeReturnValueParameter)
+            private static SqlParameter[] DiscoverSpParameterSet(SqlConnection connection, 
+                string spName, bool includeReturnValueParameter)
             {
                 if (connection == null) throw new ArgumentNullException("connection");
                 if (spName == null || spName.Length == 0) throw new ArgumentNullException("spName");
@@ -485,7 +519,8 @@ namespace ColdStoreManagement.DAL.Helper
             /// <param name="connectionString">A valid connection string for a SqlConnection</param>
             /// <param name="commandText">The stored procedure name or T-SQL command</param>
             /// <param name="commandParameters">An array of SqlParamters to be cached</param>
-            public static void CacheParameterSet(string connectionString, string commandText, params SqlParameter[] commandParameters)
+            public static void CacheParameterSet(string connectionString, string commandText, 
+                params SqlParameter[] commandParameters)
             {
                 if (connectionString == null || connectionString.Length == 0) throw new ArgumentNullException("connectionString");
                 if (commandText == null || commandText.Length == 0) throw new ArgumentNullException("commandText");

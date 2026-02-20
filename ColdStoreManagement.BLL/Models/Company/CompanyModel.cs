@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ColdStoreManagement.BLL.Models
+namespace ColdStoreManagement.BLL.Models.Company
 {
     public class CompanyModel
     {
@@ -473,29 +468,29 @@ namespace ColdStoreManagement.BLL.Models
         public int TransactionId { get; set; }
         public DateTime? TransactionDated { get; set; } = DateTime.Today;
 
-        public String TransactionPaymentType { get; set; }
-        public String TransactionCredit { get; set; }
+        public string TransactionPaymentType { get; set; }
+        public string TransactionCredit { get; set; }
 
-        public String TransactionDebit { get; set; }
+        public string TransactionDebit { get; set; }
 
-        public String TransactionRemarks { get; set; }
+        public string TransactionRemarks { get; set; }
 
 
-        public String TransactionName { get; set; }
-        public String TransactionType { get; set; }
-        public String TransactionChequeno { get; set; }
+        public string TransactionName { get; set; }
+        public string TransactionType { get; set; }
+        public string TransactionChequeno { get; set; }
 
-        public String TransactionRefno { get; set; }
+        public string TransactionRefno { get; set; }
 
 
         public decimal? TransactionAmount { get; set; }
-        public String TotalDebit { get; set; }
-        public String TotalCredit { get; set; }
+        public string TotalDebit { get; set; }
+        public string TotalCredit { get; set; }
         public decimal? TransactionDebitAmt { get; set; }
         public decimal? TransactionCreditAmt { get; set; }
         public decimal? TransactionRunning { get; set; }
 
-        public String TotalBalance { get; set; }
+        public string TotalBalance { get; set; }
 
         public int PurchaseOrderItemId { get; set; }
         public int PurchaseOrderId { get; set; }
@@ -503,35 +498,35 @@ namespace ColdStoreManagement.BLL.Models
 
         public decimal? PurchaseOrderqty { get; set; }
 
-        public String PurchaseOrderRemarks { get; set; }
-        public String PurchaseOrderBillto { get; set; }
-        public String PurchaseOrderDel { get; set; }
+        public string PurchaseOrderRemarks { get; set; }
+        public string PurchaseOrderBillto { get; set; }
+        public string PurchaseOrderDel { get; set; }
 
-        public String PurchaseOrderStatus { get; set; }
+        public string PurchaseOrderStatus { get; set; }
 
-        public String PurchaseOrderItemDescrip { get; set; }
+        public string PurchaseOrderItemDescrip { get; set; }
 
-        public String Vehno { get; set; }
-        public String Vehtype { get; set; }
+        public string Vehno { get; set; }
+        public string Vehtype { get; set; }
 
-        public String VehDriver { get; set; }
-        public String VehContact { get; set; }
+        public string VehDriver { get; set; }
+        public string VehContact { get; set; }
 
         public int Vehid { get; set; }
 
 
         public int CrissueId { get; set; }
         public int CrissueretId { get; set; }
-        public String CrissueRemarks { get; set; }
+        public string CrissueRemarks { get; set; }
 
         public decimal? CrissueQty { get; set; }
-        public String CrateCrn { get; set; }
-        public String CrissueFlag { get; set; }
+        public string CrateCrn { get; set; }
+        public string CrissueFlag { get; set; }
         public DateTime? CrateIssueDated { get; set; } = DateTime.Today;
-        public String CrissueMark { get; set; }
-        public String CrTransferGrowerGroup { get; set; }
+        public string CrissueMark { get; set; }
+        public string CrTransferGrowerGroup { get; set; }
 
-        public String CrTransferGrower { get; set; }
+        public string CrTransferGrower { get; set; }
 
         public decimal? CrateBalance { get; set; }
         public decimal? GrowerBalance { get; set; }
@@ -605,33 +600,33 @@ namespace ColdStoreManagement.BLL.Models
         public int Brandid { get; set; }
 
         public int FlexiChamberId { get; set; }
-        public String ServiceId { get; set; }
-        public String ProductId { get; set; }
-        public String VarietyId { get; set; }
-        public String PreCrateType { get; set; }
+        public string ServiceId { get; set; }
+        public string ProductId { get; set; }
+        public string VarietyId { get; set; }
+        public string PreCrateType { get; set; }
         public decimal? PreInwardQty { get; set; }
 
         public decimal? SplitlotQty { get; set; }
-        public String Mixlotkhata { get; set; }
+        public string Mixlotkhata { get; set; }
 
-        public String PreInIrn { get; set; }
+        public string PreInIrn { get; set; }
         public int Mixlotno { get; set; }
 
-        public String PackingGrower { get; set; }
-        public String QualityRemarks { get; set; }
-        public String Lotstatus { get; set; }
-        public String LotIrn { get; set; }
+        public string PackingGrower { get; set; }
+        public string QualityRemarks { get; set; }
+        public string Lotstatus { get; set; }
+        public string LotIrn { get; set; }
 
         public decimal? OwnQty { get; set; }
         public decimal? StoreQty { get; set; }
         public decimal? PrebookQty { get; set; }
-        public String PreInwardRemarks { get; set; }
-        public String PreInwardStatus { get; set; }
-        public String PreInwardUom { get; set; }
+        public string PreInwardRemarks { get; set; }
+        public string PreInwardStatus { get; set; }
+        public string PreInwardUom { get; set; }
 
-        public String PreInwardKhata { get; set; }
-        public String UserName { get; set; }
-        public String ChallanNo { get; set; }
+        public string PreInwardKhata { get; set; }
+        public string UserName { get; set; }
+        public string ChallanNo { get; set; }
 
         //////////quality
         public string PreInwardCode { get; set; }
@@ -719,28 +714,28 @@ namespace ColdStoreManagement.BLL.Models
         public bool HasFlySpeck { get; set; }
 
         [Required(ErrorMessage = "Username is required.")]
-        public String GlobalUserName { get; set; } = "";
-        public String GlobalUserGroup { get; set; } = "";
+        public string GlobalUserName { get; set; } = "";
+        public string GlobalUserGroup { get; set; } = "";
 
         public int Userid { get; set; } = 0;
-        public String UserStatus { get; set; } = "";
+        public string UserStatus { get; set; } = "";
 
-        public String Useremail { get; set; } = "";
+        public string Useremail { get; set; } = "";
 
         [Required(ErrorMessage = "Password is required.")]
-        public String UserPassword { get; set; } = "";
-        public String retypepassword { get; set; } = "";
+        public string UserPassword { get; set; } = "";
+        public string retypepassword { get; set; } = "";
         public bool Unit1 { get; set; }
         public bool Unit2 { get; set; }
         public bool Unit3 { get; set; }
         public bool Unit4 { get; set; }
         public bool Unit5 { get; set; }
-        public String UserGroupName { get; set; } = "";
+        public string UserGroupName { get; set; } = "";
         public int UserGroupid { get; set; } = 0;
-        public String UserGroupRemarks { get; set; } = "";
-        public String UserGroupStatus { get; set; } = "";
+        public string UserGroupRemarks { get; set; } = "";
+        public string UserGroupStatus { get; set; } = "";
 
-        public String UserPrivname { get; set; } = "";
+        public string UserPrivname { get; set; } = "";
         public bool Pageview { get; set; }
 
         public bool AddVal { get; set; }
@@ -914,7 +909,7 @@ namespace ColdStoreManagement.BLL.Models
 
 
         public string TransferType { get; set; }
-        public Decimal? TransferRate { get; set; }
+        public decimal? TransferRate { get; set; }
         public DateTime? TransferDate { get; set; } = DateTime.Now;
         public string TransferTo { get; set; }
 
@@ -969,16 +964,16 @@ namespace ColdStoreManagement.BLL.Models
 
         /////////////////OUT PART
         ///
-        public String DemandIrn { get; set; }
+        public string DemandIrn { get; set; }
         public DateTime? OrderDate { get; set; } = DateTime.Now;
-        public String DemandStatus { get; set; }
+        public string DemandStatus { get; set; }
         public DateTime? OrderDatefrom { get; set; } = new DateTime(2025, 10, 1);
 
         public DateTime? OrderDateto { get; set; } = DateTime.Now;
         public DateTime? DeliveryDate { get; set; } = DateTime.Now;
-        public String OrderType { get; set; }
+        public string OrderType { get; set; }
 
-        public String GrowerCombine { get; set; }
+        public string GrowerCombine { get; set; }
         public int DemandNo { get; set; }
         public int Lotbalance { get; set; }
         public int Alotbal { get; set; }
@@ -992,18 +987,18 @@ namespace ColdStoreManagement.BLL.Models
 
         public int? TransferInQty { get; set; }
         public int? TransferOutQty { get; set; }
-        public String? DemandContact { get; set; }
+        public string? DemandContact { get; set; }
 
-        public String? DemandRemarks { get; set; }
-        public String OrderBy { get; set; }
+        public string? DemandRemarks { get; set; }
+        public string OrderBy { get; set; }
 
         public int? Netqty { get; set; }
-        public String TempOrderIrn { get; set; }
+        public string TempOrderIrn { get; set; }
         public int TempOrderId { get; set; }
 
         public int Outwardno { get; set; }
 
-        public String TempOutwardIrn { get; set; }
+        public string TempOutwardIrn { get; set; }
         public int TempOutwardId { get; set; }
         public int OutwardFixid { get; set; }
         public int ChamberInqty { get; set; } = 0;
@@ -1017,57 +1012,57 @@ namespace ColdStoreManagement.BLL.Models
 
         public DateTime? DraftDatefrom { get; set; } = new DateTime(2025, 10, 1);
         public DateTime? DraftDateTo { get; set; } = DateTime.Now;
-        public String StoreoutDate { get; set; }
+        public string StoreoutDate { get; set; }
         public DateTime? DraftDate { get; set; } = DateTime.Now;
 
-        public String ChamberinDate { get; set; }
-        public String ChamberOutDate { get; set; }
-        public String Draftstat { get; set; }
+        public string ChamberinDate { get; set; }
+        public string ChamberOutDate { get; set; }
+        public string Draftstat { get; set; }
 
-        public String PackingDraftDate { get; set; }
+        public string PackingDraftDate { get; set; }
         public int DanaQty { get; set; }
         public int Storestatus { get; set; } = 0;
         public bool IsuserAssigned { get; set; }
         public int TotalOrderQty { get; set; }
         public int TotalStoreOut { get; set; }
         public int PreStoreOut { get; set; }
-        public String? StoreStat { get; set; }
+        public string? StoreStat { get; set; }
         public int DraftedQty { get; set; }
 
 
-        public String ForceRemarks { get; set; }
-        public String DraftIrn { get; set; }
+        public string ForceRemarks { get; set; }
+        public string DraftIrn { get; set; }
         public int TempDraftId { get; set; }
         public int GradingQty { get; set; }
         public int DraftId { get; set; }
         public int PelletQty { get; set; }
         //Grading Model
-        public String ReceipeName { get; set; }
-        public String Repackremarks { get; set; }
-        public String HCASE { get; set; } = "HCASE";
+        public string ReceipeName { get; set; }
+        public string Repackremarks { get; set; }
+        public string HCASE { get; set; } = "HCASE";
 
-        public String BOX { get; set; } = "BOX";
-        public String HcaseName { get; set; }
+        public string BOX { get; set; } = "BOX";
+        public string HcaseName { get; set; }
 
-        public String BoxName { get; set; }
+        public string BoxName { get; set; }
 
         //public String ReportType { get; set; }
-        public String CommonSearch { get; set; }
+        public string CommonSearch { get; set; }
         public int ReceipeId { get; set; }
         public int DraftIdentity { get; set; }
-        public String BoxBrand { get; set; }
-        public String ReceipeMarka { get; set; }
-        public String ReceipeUom { get; set; }
+        public string BoxBrand { get; set; }
+        public string ReceipeMarka { get; set; }
+        public string ReceipeUom { get; set; }
         public int SachetQty { get; set; }
         public int TotalReceipeQty { get; set; }
-        public String EntryDate { get; set; }
+        public string EntryDate { get; set; }
         public int Storeintid { get; set; }
         public decimal? ReceipeRate { get; set; }
-        public String ReceipeLocation { get; set; }
+        public string ReceipeLocation { get; set; }
         public int ReceipeQty { get; set; }
-        public String ReceipeGrade { get; set; }
+        public string ReceipeGrade { get; set; }
         public int PalletId { get; set; }
-        public String PalletName { get; set; }
+        public string PalletName { get; set; }
         public int Gradeid { get; set; }
 
         //agstock
@@ -1088,14 +1083,14 @@ namespace ColdStoreManagement.BLL.Models
         public int Packingorderid { get; set; }
 
         //Grading Model
-        public String PackingOrderIrn { get; set; }
+        public string PackingOrderIrn { get; set; }
         //public String ReportType { get; set; }
         public DateTime? PackingOrderDate { get; set; } = DateTime.Now;
 
 
         public int PackingQty { get; set; }
 
-        public String PackingOrderStatus { get; set; }
+        public string PackingOrderStatus { get; set; }
         public int Packingbalance { get; set; }
         public int ActualPackingbalance { get; set; }
         public int Recipebalance { get; set; }
@@ -1107,15 +1102,15 @@ namespace ColdStoreManagement.BLL.Models
         public DateTime? PackingOrderDateto { get; set; } = DateTime.Now;
         public int Outwardid { get; set; }
 
-        public String OutwardIrn { get; set; }
+        public string OutwardIrn { get; set; }
 
-        public String cname { get; set; }
+        public string cname { get; set; }
         public DateTime? OutwardDate { get; set; } = DateTime.Now;
-        public String Outwardtype { get; set; } = "Grading";
+        public string Outwardtype { get; set; } = "Grading";
 
         public int OutwardQty { get; set; }
 
-        public String OutwardStatus { get; set; } = "Unapproved";
+        public string OutwardStatus { get; set; } = "Unapproved";
         public int Outwardbalance { get; set; }
         public int OutwardPackingbalance { get; set; }
         public int DispatcherId { get; set; }
@@ -1129,10 +1124,10 @@ namespace ColdStoreManagement.BLL.Models
         public DateTime? OutwardDatefrom { get; set; } = new DateTime(2025, 10, 1);
 
         public DateTime? OutwardDateto { get; set; } = DateTime.Now;
-        public String OutwardGrowerGroup { get; set; }
+        public string OutwardGrowerGroup { get; set; }
 
-        public String OutwardGrowerName { get; set; }
-        public String OutwardChallanName { get; set; }
+        public string OutwardGrowerName { get; set; }
+        public string OutwardChallanName { get; set; }
 
 
 

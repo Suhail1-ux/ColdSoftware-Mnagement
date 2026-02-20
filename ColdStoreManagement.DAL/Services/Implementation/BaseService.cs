@@ -1,5 +1,5 @@
-﻿using ColdStoreManagement.BLL.Models;
-using ColdStoreManagement.BLL.Models.Auth;
+﻿using ColdStoreManagement.BLL.Models.Auth;
+using ColdStoreManagement.BLL.Models.Company;
 using ColdStoreManagement.DAL.Helper;
 using System.Data;
 

@@ -17,31 +17,85 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
             return Convert.ToInt32(result) > 0;
         }
+        public async Task<List<ServiceTypesModel>> GetServices()
+        {
+            const string query = "SELECT RTRIM(sname) AS Name FROM servicetypes";
+            return await _sql.ExecuteReaderAsync<ServiceTypesModel>(
+                query,
+                CommandType.Text
+            );
+        }
+        public async Task<List<ServiceTypesModel>> GetServicesFromAgreement(string selectedPurchase)
+        {
+            const string query = @"
+            SELECT RTRIM(sname) AS Name
+            FROM servicetypes
+            WHERE id IN (
+                SELECT [service]
+                FROM growerAgreement
+                WHERE mainid IN (
+                    SELECT partyid
+                    FROM party
+                    WHERE partytypeid + '-' + partyname = @Partyid
+                )
+            )";
+            return await _sql.ExecuteReaderAsync<ServiceTypesModel>(
+                query,
+                CommandType.Text,
+                new SqlParameter("@Partyid", selectedPurchase)
+            );
+        }
+        public async Task<List<ServiceTypesModel>> GetAllServices()
+        {
+            const string query = "SELECT id, sname, sdescrip FROM dbo.servicetypes";
+            var ds = await _sql.ExecuteDatasetAsync(CommandType.Text, query);
+            var list = new List<ServiceTypesModel>();
 
-        public async Task<bool> AddService(CompanyModel model)
+            foreach (DataRow row in ds.Tables[0].Rows)
+            {
+                list.Add(new ServiceTypesModel
+                {
+                    Id = Convert.ToInt32(row["id"]),
+                    Name = row["sname"]?.ToString(),
+                    Stdetails = row["sdescrip"]?.ToString()
+                });
+            }
+
+            return list;
+        }
+        public async Task<ServiceTypesModel?> GetServiceById(int id)
+        {
+            return await _sql.ExecuteSingleAsync<ServiceTypesModel>(
+               "SELECT id, sname as Name, sdescrip as Stdetails FROM dbo.servicetypes WHERE id = @Id",
+               CommandType.Text,
+               new SqlParameter("@Id", id)
+           );
+        }
+
+        public async Task<bool> AddService(ServiceTypesModel model)
         {
             await _sql.ExecuteNonQueryAsync(
                 CommandType.Text,
                 @"INSERT INTO dbo.servicetypes (id, sname, sdescrip)
-              VALUES (
-                (SELECT ISNULL(MAX(id) + 1, 1) FROM servicetypes),
-                @Stname,
-                @Stdetails)",
-                new SqlParameter("@Stname", model.Stname),
+                VALUES (
+                    (SELECT ISNULL(MAX(id) + 1, 1) FROM servicetypes),
+                    @Stname,
+                    @Stdetails)",
+                new SqlParameter("@Stname", model.Name),
                 new SqlParameter("@Stdetails", model.Stdetails));
 
             return true;
         }        
-        public async Task<bool> UpdateService(int id, CompanyModel model)
+        public async Task<bool> UpdateService(int id, ServiceTypesModel model)
         {
             await _sql.ExecuteNonQueryAsync(
                 CommandType.Text,
                 @"UPDATE dbo.servicetypes
-              SET sname = @Stname,
-                  sdescrip = @Stdetails
-              WHERE id = @Id",
+                  SET sname = @Stname,
+                      sdescrip = @Stdetails
+                  WHERE id = @Id",
                 new SqlParameter("@Id", id),
-                new SqlParameter("@Stname", model.Stname),
+                new SqlParameter("@Stname", model.Name),
                 new SqlParameter("@Stdetails", model.Stdetails));
 
             return true;
@@ -55,76 +109,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
             return true;
         }
-
-
-        public async Task<List<CompanyModel>> GetServices()
-        {
-            const string query = "SELECT RTRIM(sname) AS sname FROM servicetypes";
-
-            var ds = await _sql.ExecuteDatasetAsync(CommandType.Text, query);
-            var list = new List<CompanyModel>();
-
-            foreach (DataRow row in ds.Tables[0].Rows)
-            {
-                list.Add(new CompanyModel
-                {
-                    Atype = row["sname"]?.ToString()
-                });
-            }
-
-            return list;
-        }
-        public async Task<List<CompanyModel>> GetServicesFromAgreement(string selectedPurchase)
-        {
-            const string query = @"
-            SELECT RTRIM(sname) AS sname
-            FROM servicetypes
-            WHERE id IN (
-                SELECT [service]
-                FROM growerAgreement
-                WHERE mainid IN (
-                    SELECT partyid
-                    FROM party
-                    WHERE partytypeid + '-' + partyname = @Partyid
-                )
-            )";
-
-            var ds = await _sql.ExecuteDatasetAsync(
-                CommandType.Text,
-                query,
-                new SqlParameter("@Partyid", selectedPurchase));
-
-            var list = new List<CompanyModel>();
-
-            foreach (DataRow row in ds.Tables[0].Rows)
-            {
-                list.Add(new CompanyModel
-                {
-                    Atype = row["sname"]?.ToString()
-                });
-            }
-
-            return list;
-        }
-        public async Task<List<CompanyModel>> GetAllServices()
-        {
-            const string query = "SELECT id, sname, sdescrip FROM dbo.servicetypes";
-
-            var ds = await _sql.ExecuteDatasetAsync(CommandType.Text, query);
-            var list = new List<CompanyModel>();
-
-            foreach (DataRow row in ds.Tables[0].Rows)
-            {
-                list.Add(new CompanyModel
-                {
-                    Skid = Convert.ToInt32(row["id"]),
-                    Stname = row["sname"]?.ToString(),
-                    Stdetails = row["sdescrip"]?.ToString()
-                });
-            }
-
-            return list;
-        }
+        
     }
 
 }

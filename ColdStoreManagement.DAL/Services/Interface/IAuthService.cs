@@ -1,5 +1,5 @@
-﻿using ColdStoreManagement.BLL.Models;
-using ColdStoreManagement.BLL.Models.Auth;
+﻿using ColdStoreManagement.BLL.Models.Auth;
+using ColdStoreManagement.BLL.Models.Company;
 
 namespace ColdStoreManagement.DAL.Services.Interface
 {

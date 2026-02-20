@@ -24,10 +24,17 @@ namespace ColdStoreManagement.Configurations
             services.AddScoped(sp => new SQLHelperCore(sqlConnectionString));
 
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IChamberService, ChamberService>();
-            services.AddScoped<ICrateService, CrateService>();
+            services.AddScoped<IBankingService, BankingService>();
+            services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IPackageService, PackageService>();
+            services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
+            services.AddScoped<IChamberService, ChamberService>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICrateService, CrateService>();
+            
 
             return services;
         }

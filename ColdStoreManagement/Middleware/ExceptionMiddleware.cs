@@ -1,6 +1,7 @@
 ﻿using ColdStoreManagement.BLL.Errors;
-using System.Net;
+using Microsoft.Data.SqlClient;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ColdStoreManagement.Middleware
 {
@@ -31,57 +32,101 @@ namespace ColdStoreManagement.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong {FunctionName}: {ex.Message}");
+                //_logger.LogError($"Something went wrong {FunctionName}: {ex.Message}");
                 // _logger.LogError(ex, ex.Message);
 
-                httpContext.Response.ContentType = "application/json";
-                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                var response = APIException.FromException(ex, _hostEnvironment.IsDevelopment());
-
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-                };
-
-                var json = JsonSerializer.Serialize(response, options);
-                await httpContext.Response.WriteAsync(json);
+                await HandleExceptionAsync(httpContext, ex);
             }
         }
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            int statusCode;
+            string message;
+
+            switch (ex)
+            {
+                case AppException appEx:
+                    statusCode = appEx.StatusCode;
+                    message = appEx.Message;
+                    break;
+
+                case SqlException:
+                    statusCode = StatusCodes.Status503ServiceUnavailable;
+                    message = "Database service is unavailable";
+                    break;
+
+                case UnauthorizedAccessException:
+                    statusCode = StatusCodes.Status401Unauthorized;
+                    message = "Unauthorized access";
+                    break;
+
+                default:
+                    statusCode = StatusCodes.Status500InternalServerError;
+                    message = "An unexpected error occurred";
+                    break;
+            }
+
+            _logger.LogError(
+                ex,
+                "Unhandled exception | TraceId: {TraceId} | Path: {Path}",
+                context.TraceIdentifier,
+                context.Request.Path
+            );
+
+            var response = new APIErrorResponse
+            {
+                StatusCode = statusCode,
+                Message = message,
+                TraceId = context.TraceIdentifier,
+                Details = ex.ToString()
+            };
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = statusCode;
+
+            await context.Response.WriteAsync(
+                JsonSerializer.Serialize(response, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                })
+            );
+        }
+
+
         /// <summary>
         /// this function used to get running method name
         /// </summary>
-        private static string FunctionName
-        {
-            get
-            {
-                try
-                {
-                    var st = new System.Diagnostics.StackTrace();
-                    var sf = st.GetFrame(1);
+        //private static string FunctionName
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var st = new System.Diagnostics.StackTrace();
+        //            var sf = st.GetFrame(1);
 
-                    // Check for null BEFORE accessing sf.GetMethod()
-                    if (sf != null)
-                    {
-                        var currentMethodName = sf.GetMethod();
-                        if (currentMethodName != null) // Also check if currentMethodName is null (unlikely but possible)
-                        {
-                            if (currentMethodName.Name == "MoveNext")
-                                return currentMethodName.ReflectedType?.FullName ?? string.Empty; // Null-conditional operator and null-coalescing
-                            else
-                                return currentMethodName.Name;
-                        }
-                    }
+        //            // Check for null BEFORE accessing sf.GetMethod()
+        //            if (sf != null)
+        //            {
+        //                var currentMethodName = sf.GetMethod();
+        //                if (currentMethodName != null) // Also check if currentMethodName is null (unlikely but possible)
+        //                {
+        //                    if (currentMethodName.Name == "MoveNext")
+        //                        return currentMethodName.ReflectedType?.FullName ?? string.Empty; // Null-conditional operator and null-coalescing
+        //                    else
+        //                        return currentMethodName.Name;
+        //                }
+        //            }
 
-                    return string.Empty; // Return empty if sf or currentMethodName is null
+        //            return string.Empty; // Return empty if sf or currentMethodName is null
 
-                }
-                catch (Exception)
-                {
-                    return string.Empty; // Return empty on error
-                }
-            }
-        }
+        //        }
+        //        catch (Exception)
+        //        {
+        //            return string.Empty; // Return empty on error
+        //        }
+        //    }
+        //}
     }
 }

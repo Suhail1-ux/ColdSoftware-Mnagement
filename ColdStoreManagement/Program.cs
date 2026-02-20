@@ -1,6 +1,7 @@
-﻿using ColdStoreManagement.Configurations;
+﻿using ColdStoreManagement.BLL.Data;
+using ColdStoreManagement.Configurations;
 using ColdStoreManagement.Middleware;
-using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 using System.Text.Json;
@@ -55,6 +56,10 @@ builder.Services.AddControllers()
         opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 // Configure Swagger for API Documentation
@@ -72,7 +77,7 @@ builder.Services.ConfigAuthentication(Configuration);
 builder.Services.ConfigAuthorizationPolicies();
 
 // RateLimiting middleware
-//builder.Services.ConfigRateLimiter();
+builder.Services.ConfigRateLimiter();
 
 // Add Health Checks
 builder.Services.AddHealthChecks();
@@ -126,7 +131,7 @@ app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure RateLimiting middleware
-//app.UseRateLimiter();
+app.UseRateLimiter();
 
 // Map Controllers
 app.MapControllers();
