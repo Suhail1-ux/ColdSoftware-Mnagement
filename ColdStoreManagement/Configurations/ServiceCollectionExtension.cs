@@ -29,7 +29,6 @@ namespace ColdStoreManagement.Configurations
             services.AddScoped<ICrateService, CrateService>();
             services.AddScoped<IGrowerService, GrowerService>();
             services.AddScoped<ITransactionsInService, TransactionsInService>();
-
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
 
             return services;

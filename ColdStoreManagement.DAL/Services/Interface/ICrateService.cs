@@ -1,33 +1,81 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using ColdStoreManagement.BLL.Models;
 using ColdStoreManagement.BLL.Models.Crate;
 
 namespace ColdStoreManagement.DAL.Services.Interface
 {
     public interface ICrateService
     {
-        Task<List<CrateModel>> GenerateCrateReportAsync(CrateModel model);
-        Task<List<CrateModel>> GetCrateSummaryMainAsync();
+        // ========= CrateModel Based (New) =========
+        Task<List<CrateModel>> GenerateCrateReportModelAsync(CrateModel model);
+        Task<List<CrateModel>> GetCrateSummaryMainModelAsync();
         Task<List<CrateModel>> GetDailyCratesProcEmptyAsync();
         Task<List<CrateModel>> GetDailyCratesProcOutAsync();
-        Task<List<CrateModel>> CheckCratesPartyOutAsync(string growerGroupName, string flag);
-        Task<List<CrateModel>> CheckCratesPartySubOutAsync(string growerName, string growerGroupName, string flag);
+        Task<List<CrateModel>> CheckCratesPartyOutModelAsync(string growerGroupName, string flag);
+        Task<List<CrateModel>> CheckCratesPartySubOutModelAsync(string growerName, string growerGroupName, string flag);
         Task<CrateModel> AddCrateOutAsync(CrateModel model);
         Task<CrateModel> UpdateCrateIssueOutAsync(CrateModel model);
         Task<CrateModel> DeleteCrateIssueAsync(int id, CrateModel model);
         Task<List<CrateModel>> GenerateCratePreviewAsync(int id, CrateModel model);
-        // Added based on CrateSummary usage
         Task<List<CrateModel>> GetCrateOrderNoAsync(); 
         Task<List<CrateModel>> GetallCrateMarksAsync();
-
-        // New methods for Phase 2 Refactoring
         Task<CrateModel?> GetCrateIssueDetAsync(int selectedGrowerId);
         Task<CrateModel?> GetCratePrivs2Async(string Ugroup);
         Task<List<CrateModel>> GetallCrateflagallAsync();
         Task<List<CrateModel>> GetCrateordersEmptyAsync();
         Task<CrateModel?> GenerateCrateReportPdfAsync(CrateModel model);
-        
         Task<List<CrateModel>> GenerateCrateReportDelAsync(CrateModel model);
         Task<List<CrateModel>> GenerateRawCrateReportAsync(CrateModel model, int unit);
+
+        // ========= CompanyModel Based (Original) =========
+        // ========= Crate Type =========
+        Task<bool> DoesCrateTypeExistAsync(string name);
+        Task<bool> AddCrateTypeAsync(CompanyModel model);
+        Task<bool> UpdateCrateTypeAsync(CompanyModel model);
+        Task<bool> DeleteCrateTypeAsync(int id);
+
+        // ========= Crate Flag =========
+        Task<bool> DoesCrateFlagExistAsync(string name);
+        Task<bool> AddCrateFlagAsync(CompanyModel model);
+        Task<bool> UpdateCrateFlagAsync(CompanyModel model);
+        Task<bool> DeleteCrateFlagAsync(int id);
+
+        // ========= Issue / Transaction =========
+        Task<CompanyModel?> AddCrateIssueAsync(CompanyModel model);
+
+        // ========= Lookups =========
+        Task<int> GetMaxCrateIssueIdAsync();
+        Task<List<CompanyModel>> GetAllCrateMarksAsync();
+
+        // ========= Daily =========
+        Task<List<CompanyModel>> GetDailyCratesAsync();
+        Task<List<CompanyModel>> GetDailyCratesAdjustmentAsync();
+        Task<List<CompanyModel>> GetDailyCratesOutAsync();
+        Task<List<CompanyModel>> GetDailyCratesEmptyAsync();
+
+        Task<List<CompanyModel>> GetDailyCratesByDateAsync(DateTime from, DateTime to);
+        Task<List<CompanyModel>> GetDailyCratesAdjByDateAsync(DateTime from, DateTime to);
+        Task<List<CompanyModel>> GetDailyCratesOutByDateAsync(DateTime from, DateTime to);
+        Task<List<CompanyModel>> GetDailyCratesEmptyByDateAsync(DateTime from, DateTime to);
+
+        // ========= Summary =========
+        Task<List<CompanyModel>> GetCrateSummaryMainAsync();
+        Task<List<CompanyModel>> GetCrateSummarySubGrowerAsync(string partyName);
+
+        // ========= Reports =========
+        Task<List<CompanyModel>> GenerateCrateReportAsync(CompanyModel filter);
+
+        // ========= Checks =========
+        Task<List<CompanyModel>> CheckCratesPartyAsync(string party);
+        Task<List<CompanyModel>> CheckCratesAgreementAsync(string party);
+        Task<List<CompanyModel>> CheckCratesAgreementOnVQtyAsync(string party);
+
+        Task<List<CompanyModel>> CheckCratesPartyOutAsync(string party, string flag);
+        Task<List<CompanyModel>> CheckCratesPartyEmptyAsync(string party);
+
+        Task<List<CompanyModel>> CheckCratesPartySubAsync(string party, string grower);
+        Task<List<CompanyModel>> CheckCratesPartySubEmptyAsync(string party, string grower);
+        Task<List<CompanyModel>> CheckCratesPartySubOutAsync(string party, string grower, string flag);
     }
 }

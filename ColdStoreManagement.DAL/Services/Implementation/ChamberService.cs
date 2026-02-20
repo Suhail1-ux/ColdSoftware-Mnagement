@@ -4,10 +4,6 @@ using ColdStoreManagement.DAL.Services.Interface;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-using Microsoft.Extensions.Configuration;
-
-namespace ColdStoreManagement.DAL.Services.Implementation
-{
     public class ChamberService(SQLHelperCore sql, IConfiguration _configuration) : BaseService(sql), IChamberService
     {
         #region ---------- Chamber / Slot ----------
@@ -78,7 +74,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             }
             return banks;
         }
-
         #endregion
 
 
