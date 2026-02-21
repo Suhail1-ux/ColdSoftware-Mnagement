@@ -51,23 +51,23 @@ namespace ColdStoreManagement.Configurations
                 {
                     OnAuthenticationFailed = context =>
                     {
-                        //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        //context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
                         var result = JsonConvert.SerializeObject(new { status = false, message = "User is not authenticated." });
                         return context.Response.WriteAsync(result);
                     },
                     OnChallenge = context =>
                     {
                         context.HandleResponse();
-                        //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        //context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
                         var result = JsonConvert.SerializeObject(new { status = false, message = "User is not authenticated." });
                         return context.Response.WriteAsync(result);
                     },
                     OnForbidden = context =>
                     {
-                        //context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        // context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        context.Response.ContentType = "application/json";
                         var result = JsonConvert.SerializeObject(new { status = false, message = "User is not authorized to access this resource." });
                         return context.Response.WriteAsync(result);
                     }

@@ -52,7 +52,7 @@ namespace ColdStoreManagement.Controllers
                 throw;
             }
         }
-        [HttpGet("details/{unitName:string}")]
+        [HttpGet("details/{unitName}")]
         public async Task<IActionResult> GetByNameAsync(string unitName)
         {
             try
