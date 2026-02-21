@@ -1,0 +1,55 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ColdStoreManagement.BLL.Models.Company;
+using ColdStoreManagement.DAL.Services.Interface.TransactionsOut;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ColdStoreManagement.Controllers.TransactionsOut
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class StoreOutController : ControllerBase
+    {
+        private readonly IStoreOutService _storeOutService;
+
+        public StoreOutController(IStoreOutService storeOutService)
+        {
+            _storeOutService = storeOutService;
+        }
+
+        [HttpGet("GetStoreOutStatus")]
+        public async Task<IActionResult> GetStoreOutStatus(string stat, int UnitId, string demandirn, string avuser)
+        {
+            var result = await _storeOutService.GetStoreOutStatus(stat, UnitId, demandirn, avuser);
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateDraftQuantity")]
+        public async Task<IActionResult> UpdateDraftQuantity([FromBody] CompanyModel EditModel)
+        {
+            var result = await _storeOutService.UpdateDraftQuantity(EditModel);
+            return Ok(result);
+        }
+
+        [HttpPost("ForceUpload")]
+        public async Task<IActionResult> ForceUpload(int id, string Frems)
+        {
+            var result = await _storeOutService.ForceUpload(id, Frems);
+            return Ok(result);
+        }
+
+        [HttpPost("ValidateStoreOutTransQty")]
+        public async Task<IActionResult> ValidateStoreOutTransQty([FromBody] CompanyModel companyModel)
+        {
+            var result = await _storeOutService.ValidateStoreOutTransQty(companyModel);
+            return Ok(result);
+        }
+
+        [HttpPost("AddStoreOut")]
+        public async Task<IActionResult> AddStoreOut([FromBody] CompanyModel companyModel)
+        {
+            var result = await _storeOutService.AddStoreOut(companyModel);
+            return Ok(result);
+        }
+    }
+}

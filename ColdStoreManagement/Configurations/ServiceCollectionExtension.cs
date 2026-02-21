@@ -1,6 +1,8 @@
 ﻿using ColdStoreManagement.DAL.Helper;
 using ColdStoreManagement.DAL.Services.Implementation;
+using ColdStoreManagement.DAL.Services.Implementation.TransactionsOut;
 using ColdStoreManagement.DAL.Services.Interface;
+using ColdStoreManagement.DAL.Services.Interface.TransactionsOut;
 
 namespace ColdStoreManagement.Configurations
 {
@@ -37,6 +39,15 @@ namespace ColdStoreManagement.Configurations
             services.AddScoped<IGrowerService, GrowerService>();
             services.AddScoped<ITransactionsInService, TransactionsInService>();
             services.AddScoped<IVehicleInfoService, VehicleInfoService>();
+
+            // Transactions Out Services
+            services.AddScoped<ICalendarService, CalendarService>();
+            services.AddScoped<IDemandOrderService, DemandOrderService>();
+            services.AddScoped<IStoreOutService, StoreOutService>();
+            services.AddScoped<IPackingDraftService, PackingDraftService>();
+            services.AddScoped<IPackingOrderService, PackingOrderService>();
+            services.AddScoped<IDispatchService, DispatchService>();
+            services.AddScoped<IFinalOutwardService, FinalOutwardService>();
 
             return services;
         }
