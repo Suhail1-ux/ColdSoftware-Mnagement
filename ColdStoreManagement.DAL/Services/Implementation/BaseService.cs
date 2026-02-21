@@ -14,7 +14,12 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             if (model == null) return;
 
             var result = await _sql.ExecuteSingleAsync<CompanyModel>(                
-                "SELECT TOP 1 flag, remarks, unitid, usergroup FROM dbo.svalidate",
+                @"SELECT TOP 1 
+                    flag        AS RetFlag, 
+                    remarks     AS RetMessage, 
+                    unitid      AS GlobalUnitId, 
+                    usergroup   AS GlobalUserGroup 
+                FROM dbo.svalidate",
                 CommandType.Text);
             if (result == null)
                 return;
@@ -44,7 +49,12 @@ namespace ColdStoreManagement.DAL.Services.Implementation
         protected async Task FillValidationAsync(LoginResultModel model)
         {
             var result = await _sql.ExecuteSingleAsync<LoginResultModel>(
-               "SELECT TOP 1 flag,remarks,unitid,usergroup FROM dbo.svalidate",
+               @"SELECT TOP 1 
+                    flag        AS RetFlag,
+                    remarks     AS RetMessage,
+                    unitid      AS GlobalUnitId,
+                    usergroup   AS GlobalUserGroup 
+                FROM dbo.svalidate",
                CommandType.Text);
 
             if (result == null)
