@@ -412,8 +412,8 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 CommandType.StoredProcedure,
                 "AddNewChamber",
                 new SqlParameter("@ctype", model.ChamberType),
-                new SqlParameter("@unit", model.UnitName),
-                new SqlParameter("@Capacity", model.Capacity),
+                new SqlParameter("@unit", model.Unitname),
+                new SqlParameter("@capacity", model.Capacity),
                 new SqlParameter("@User", model.GlobalUserName)
             );
 
@@ -429,8 +429,8 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 "UpdateChamber",
                 new SqlParameter("@chamberid", chamberid),
                 new SqlParameter("@ctype", model.ChamberType),
-                new SqlParameter("@unit", model.UnitName),
-                new SqlParameter("@Capacity", model.Capacity),
+                new SqlParameter("@unit", model.Unitname),
+                new SqlParameter("@capacity", model.Capacity),
                 new SqlParameter("@User", model.GlobalUserName)
             );
 
