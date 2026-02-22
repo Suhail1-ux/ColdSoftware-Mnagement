@@ -10,6 +10,29 @@ namespace ColdStoreManagement.DAL.Services.Implementation
     public class CompanyService(SQLHelperCore sql) : BaseService(sql), ICompanyService
     {
         #region ---------Company---------
+
+        public async Task<List<CompanyDto>> GetAllCompaniesAsync()
+        {
+            return await _sql.ExecuteReaderAsync<CompanyDto>(
+                @"SELECT 
+              cid       AS Id,
+              cname     AS Name,
+              gst       AS Gst,
+              regno     AS Regno,
+              pan       AS Pan,
+              website   AS Website,
+              addr      AS Caddress,
+              city      AS City,
+              Contact1  AS Phone,
+              contact2  AS Mobile,
+              State     AS State,
+              Pincode   AS Pincode,
+              email     AS Email
+          FROM company
+          ORDER BY cname",
+                CommandType.Text
+            );
+        }
         public async Task<CompanyDto?> GetCompanyByIdAsync(int companyId)
         {
             return await _sql.ExecuteSingleAsync<CompanyDto>(

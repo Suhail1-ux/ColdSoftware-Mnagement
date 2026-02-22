@@ -6,7 +6,8 @@ namespace ColdStoreManagement.DAL.Services.Interface
     public interface ICompanyService
     {
         // Company
-        Task<CompanyDto?> GetCompanyByIdAsync(int companyId = 1);
+        Task<CompanyDto?> GetCompanyByIdAsync(int companyId);
+        Task<List<CompanyDto>> GetAllCompaniesAsync();
         Task<bool> EditCompany(int id, CompanyDto companyDto);
 
         // Building

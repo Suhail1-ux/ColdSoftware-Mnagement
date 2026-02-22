@@ -42,6 +42,21 @@ namespace ColdStoreManagement.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCompanies()
+        {
+            try
+            {
+                var result = await _companyService.GetAllCompaniesAsync();
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                throw; // handled by ExceptionMiddleware
+            }
+        }
+
         [HttpPut("{id:int}")]
         public async Task<IActionResult> EditCompany(int id, [FromBody] CompanyDto model)
         {
