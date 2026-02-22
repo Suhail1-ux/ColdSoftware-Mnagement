@@ -32,13 +32,24 @@ namespace ColdStoreManagement.Controllers
                         var handler = new JwtSecurityTokenHandler();
                         JwtSecurityToken parsedToken = handler.ReadJwtToken(token);
 
-
+                        // used this token on auth service
+                        //var claims = new List<Claim>
+                        //{
+                        //    new Claim(ClaimTypes.NameIdentifier, user.GlobalUserId.ToString()),
+                        //    new Claim(ClaimTypes.Name, user.GlobalUserName),
+                        //    new Claim(ClaimTypes.Role, user.GlobalUserGroup),
+                        //    new Claim(ClaimTypes.Sid, user.GlobalUnitId.ToString()),
+                        //    new Claim("UnitName", user.GlobalUnitName ?? "")
+                        //};
                         foreach (Claim claim in parsedToken.Claims)
                         {
                             switch (claim.Type)
                             {
                                 case ClaimTypes.NameIdentifier:
                                     userModel.UserId = int.Parse(claim.Value);
+                                    break;
+                                case ClaimTypes.Name:
+                                    userModel.Username = claim.Value;
                                     break;
                                 case ClaimTypes.Email:
                                     userModel.Email = claim.Value;
@@ -47,12 +58,14 @@ namespace ColdStoreManagement.Controllers
                                     userModel.Role = claim.Value;
                                     break;
                                 case ClaimTypes.Sid:
+                                    userModel.UnitId = int.Parse(claim.Value);
+                                    break;
+                                case "UnitName":
                                     userModel.UnitName = claim.Value;
                                     break;
                                 case JwtRegisteredClaimNames.Jti:
                                     userModel.Jti = claim.Value;
                                     break;
-                                    // Add more cases for other claims if needed
                             }
                         }
                     }

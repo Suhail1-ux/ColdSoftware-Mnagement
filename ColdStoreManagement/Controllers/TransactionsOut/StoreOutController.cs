@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ColdStoreManagement.BLL.Models.Company;
 using ColdStoreManagement.DAL.Services.Interface.TransactionsOut;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +6,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoreOutController : ControllerBase
+    public class StoreOutController(IStoreOutService storeOutService) : ControllerBase
     {
-        private readonly IStoreOutService _storeOutService;
-
-        public StoreOutController(IStoreOutService storeOutService)
-        {
-            _storeOutService = storeOutService;
-        }
+        private readonly IStoreOutService _storeOutService = storeOutService;
 
         [HttpGet("GetStoreOutStatus")]
         public async Task<IActionResult> GetStoreOutStatus(string stat, int UnitId, string demandirn, string avuser)

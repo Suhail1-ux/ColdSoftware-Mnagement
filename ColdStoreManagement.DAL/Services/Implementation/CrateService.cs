@@ -8,7 +8,7 @@ using ColdStoreManagement.DAL.Helper;
 
 namespace ColdStoreManagement.DAL.Services.Implementation
 {
-    public class CrateService: BaseService, ICrateService
+    public class CrateService : BaseService, ICrateService
     {
         private readonly IConfiguration _configuration;
 
@@ -226,7 +226,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 "CratesummarySub",
                 new SqlParameter("@partyname", party));
 
-            var ds = await _sql.ExecuteDatasetAsync(
+            using var ds = await _sql.ExecuteDatasetAsync(
                 CommandType.Text,
                 "SELECT Agreement,crateissue,Cratereceive,EmptyReceive FROM CrateAnalysissummary");
 
@@ -357,7 +357,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
         public async Task<int> GetMaxCrateIssueIdAsync()
         {
-            var ds = await _sql.ExecuteDatasetAsync(
+            using var ds = await _sql.ExecuteDatasetAsync(
                 CommandType.Text,
                 "SELECT MAX(cid) AS cid FROM crateissue");
 
@@ -370,9 +370,9 @@ namespace ColdStoreManagement.DAL.Services.Implementation
         }
         public async Task<List<CompanyModel>> GetAllCrateMarksAsync()
         {
-           using  var ds = await _sql.ExecuteDatasetAsync(
-                CommandType.Text,
-                "SELECT DISTINCT CrateMark FROM Crateissue");
+            using var ds = await _sql.ExecuteDatasetAsync(
+                 CommandType.Text,
+                 "SELECT DISTINCT CrateMark FROM Crateissue");
             if (ds.Tables.Count == 0)
                 return new List<CompanyModel>();
 
@@ -510,8 +510,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 })
                 .ToList();
         }
-
-
         private static List<CompanyModel> MapCrateIssue(DataSet ds)
         {
             if (ds.Tables.Count == 0)
@@ -534,7 +532,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
 
         public async Task<CrateModel?> GetCrateIssueDetAsync(int selectedGrowerId)
-
         {
             CrateModel? crateModel = null;
             try
@@ -602,7 +599,9 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("SqlDbContext")))
                 {
                     await con.OpenAsync();
-                    const string query = "select Addval,Editval,ViewVal,DelVal from userpriv where Groupid in (select usergroupid from usergroup where name=@Ugroup) and pname=@pname";
+                    const string query = @"select Addval,Editval,ViewVal,DelVal 
+                                 from userpriv
+                                 where Groupid in (select usergroupid from usergroup where name=@Ugroup) and pname=@pname";
 
                     using (var cmd = new SqlCommand(query, con))
                     {
@@ -1273,7 +1272,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
         public async Task<CrateModel> AddCrateOutAsync(CrateModel model)
         {
-           // if (model == null) return null;
+            // if (model == null) return null;
 
             using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("SqlDbContext")))
             {
@@ -1592,70 +1591,62 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
         public async Task<List<CrateModel>> GetCrateOrderNoAsync()
         {
-            List<CrateModel> result = new List<CrateModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("SqlDbContext")))
+                var list = new List<CrateModel>();
+
+                using var dt = await _sql.ExecuteDatasetAsync(
+                    "select max(cid) as cid from crateissue",
+                    CommandType.Text
+                );
+
+                if (dt.Tables.Count == 0)
+                    return list;
+
+                foreach (DataRow rdr in dt.Tables[0].Rows)
                 {
-                    await con.OpenAsync();
-                    var sql = "select max(cid) as cid from crateissue";
-                    using (var cmd = new SqlCommand(sql, con))
+                    list.Add(new CrateModel
                     {
-                        using (var rdr = await cmd.ExecuteReaderAsync())
-                        {
-                            if (await rdr.ReadAsync())
-                            {
-                                result.Add(new CrateModel
-                                {
-                                    CrissueId = rdr["cid"] != DBNull.Value ? Convert.ToInt32(rdr["cid"]) : 0
-                                });
-                            }
-                        }
-                    }
+                        CrissueId = rdr["cid"] != DBNull.Value ? Convert.ToInt32(rdr["cid"]) : 0
+                    });
                 }
+                return list;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in GetCrateOrderNoAsync: {ex.Message}");
                 throw;
             }
-            return result;
         }
-
         public async Task<List<CrateModel>> GetallCrateMarksAsync()
         {
-            List<CrateModel> getCrateMark = new List<CrateModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("SqlDbContext")))
+                var list = new List<CrateModel>();
+
+                using var dt = await _sql.ExecuteDatasetAsync(
+                    "select distinct CrateMark from Crateissue",
+                    CommandType.Text
+                );
+
+                if (dt.Tables.Count == 0)
+                    return list;
+
+                foreach (DataRow rdr in dt.Tables[0].Rows)
                 {
-                    const string query = "select distinct CrateMark from Crateissue";
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    list.Add(new CrateModel
                     {
-                        cmd.CommandType = CommandType.Text;
-                        await con.OpenAsync();
-                        using (SqlDataReader rdr = await cmd.ExecuteReaderAsync())
-                        {
-                            while (await rdr.ReadAsync())
-                            {
-                                getCrateMark.Add(new CrateModel
-                                {
-                                    CrissueMark = rdr["CrateMark"].ToString()
-                                });
-                            }
-                        }
-                    }
+                        CrissueMark = rdr["CrateMark"]?.ToString()
+                    });
                 }
+                return list;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in GetallCrateMarksAsync: {ex.Message}");
                 throw;
             }
-            return getCrateMark;
         }
-
-
 
     }
 }

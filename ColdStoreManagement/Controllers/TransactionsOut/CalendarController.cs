@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ColdStoreManagement.BLL.Models.Company;
 using ColdStoreManagement.DAL.Services.Interface.TransactionsOut;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,14 +5,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CalendarController : ControllerBase
+    public class CalendarController(ICalendarService calendarService) : ControllerBase
     {
-        private readonly ICalendarService _calendarService;
-
-        public CalendarController(ICalendarService calendarService)
-        {
-            _calendarService = calendarService;
-        }
+        private readonly ICalendarService _calendarService = calendarService;
 
         [HttpGet("GetallSlots")]
         public async Task<IActionResult> GetallSlots()

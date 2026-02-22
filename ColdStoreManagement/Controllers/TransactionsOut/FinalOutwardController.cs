@@ -6,14 +6,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FinalOutwardController : ControllerBase
+    public class FinalOutwardController(IFinalOutwardService finalOutwardService) : ControllerBase
     {
-        private readonly IFinalOutwardService _finalOutwardService;
-
-        public FinalOutwardController(IFinalOutwardService finalOutwardService)
-        {
-            _finalOutwardService = finalOutwardService;
-        }
+        private readonly IFinalOutwardService _finalOutwardService = finalOutwardService;
 
         [HttpGet("FInaloutwardPriv")]
         public async Task<IActionResult> FInaloutwardPriv(string Ugroup)
@@ -32,7 +27,8 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
         [HttpPost("UpdateFinaloutward")]
         public async Task<IActionResult> UpdateFinaloutward([FromBody] UpdateFinalOutwardRequest request)
         {
-            var result = await _finalOutwardService.UpdateFinaloutward(request.CheckedPellets, request.BaseEditModel, request.Unit);
+            var result = await _finalOutwardService.UpdateFinaloutward(request.CheckedPellets, 
+                request.BaseEditModel, request.Unit);
             return Ok(result);
         }
     }
