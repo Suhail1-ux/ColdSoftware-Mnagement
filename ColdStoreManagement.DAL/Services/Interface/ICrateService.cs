@@ -16,7 +16,6 @@ namespace ColdStoreManagement.DAL.Services.Interface
         Task<CrateModel> UpdateCrateIssueOutAsync(CrateModel model);
         Task<CrateModel> DeleteCrateIssueAsync(int id, CrateModel model);
         Task<List<CrateModel>> GenerateCratePreviewAsync(int id, CrateModel model);
-        Task<List<CrateModel>> GetCrateOrderNoAsync(); 
         Task<List<CrateModel>> GetallCrateMarksAsync();
         Task<CrateModel?> GetCrateIssueDetAsync(int selectedGrowerId);
         Task<CrateModel?> GetCratePrivs2Async(string Ugroup);
@@ -28,24 +27,11 @@ namespace ColdStoreManagement.DAL.Services.Interface
 
         // ========= CompanyModel Based (Original) =========
 
-        // ========= Crate Type =========
-        Task<bool> DoesCrateTypeExistAsync(string name);
-        Task<bool> AddCrateTypeAsync(CompanyModel model);
-        Task<bool> UpdateCrateTypeAsync(CompanyModel model);
-        Task<bool> DeleteCrateTypeAsync(int id);
-
-        // ========= Crate Flag =========
-        Task<bool> DoesCrateFlagExistAsync(string name);
-        Task<bool> AddCrateFlagAsync(CrateFlags model);
-        Task<bool> UpdateCrateFlagAsync(CrateFlags model);
-        Task<bool> DeleteCrateFlagAsync(int id);
-
         // ========= Issue / Transaction =========
         Task<CompanyModel?> AddCrateIssueAsync(CompanyModel model);
 
         // ========= Lookups =========
         Task<int> GetMaxCrateIssueIdAsync();
-        Task<List<CompanyModel>> GetAllCrateMarksAsync();
 
         // ========= Daily =========
         Task<List<CompanyModel>> GetDailyCratesAsync();

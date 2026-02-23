@@ -43,6 +43,8 @@ namespace ColdStoreManagement.Configurations
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICrateService, CrateService>();
+            services.AddScoped<ICrateTypeService, CrateTypeService>();
+            services.AddScoped<ICrateFlagService, CrateFlagService>();
             services.AddScoped<IGrowerService, GrowerService>();
             services.AddScoped<ITransactionsInService, TransactionsInService>();
             services.AddScoped<IVehicleInfoService, VehicleInfoService>();

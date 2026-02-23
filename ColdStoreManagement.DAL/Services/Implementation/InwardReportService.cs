@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using ColdStoreManagement.DAL.Helper;
 
 namespace ColdStoreManagement.DAL.Services.Implementation
 {

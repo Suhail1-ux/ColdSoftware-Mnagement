@@ -17,110 +17,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             _configuration = configuration;
         }
 
-        // ================== EXISTS ==================
-
-        public async Task<bool> DoesCrateTypeExistAsync(string name)
-            => (await _sql.ExecuteScalarAsync<int>(
-                "SELECT COUNT(1) FROM crtypes WHERE name=@Name",
-                CommandType.Text,
-                new SqlParameter("@Name", name))) > 0;
-
-        public async Task<bool> DoesCrateFlagExistAsync(string name)
-            => (await _sql.ExecuteScalarAsync<int>(
-                "SELECT COUNT(1) FROM CrateFlags WHERE name=@Name",
-                CommandType.Text,
-                new SqlParameter("@Name", name))) > 0;
-
-
-        // ================== CRUD ==================
-
-        public async Task<bool> AddCrateTypeAsync(CompanyModel m)
-        {
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                @"insert into dbo.crtypes (id,name,Crqty) 
-                        values((select isnull(max(id+1),1) from crtypes),@Crname,@Crqty)",
-                new SqlParameter("@Crname", m.Crname),
-                new SqlParameter("@Crqty", m.Crqty));
-
-            return true;
-        }
-
-        public async Task<bool> UpdateCrateTypeAsync(CompanyModel m)
-        {
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                "update dbo.crtypes set name=@Crname,Crqty=@Crqty where  id=@Id",
-                new SqlParameter("@id", m.Crid),
-                new SqlParameter("@Crname", m.Crname),
-                new SqlParameter("@Crqty", m.Crqty));
-            return true;
-        }
-
-        public async Task<bool> DeleteCrateTypeAsync(int id)
-        {
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                "DELETE crtypes WHERE id=@id",
-                new SqlParameter("@id", id));
-            return true;
-        }
-
-        public async Task<bool> AddCrateFlagAsync(CrateFlags model)
-        {
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                @"insert into dbo.CrateFlags (id,name,ftype,srtype)  
-                    values((select isnull(max(id+1),1) from CrateFlags),@Cfname,@Cfstat,@Cflag)",
-
-                new SqlParameter("@Cfname", model.Name),
-                new SqlParameter("@Cfstat", model.Ftype),
-                new SqlParameter("@Cflag", model.Srtype));
-
-            return true;
-        }
-        public async Task<bool> UpdateCrateFlagAsync(CrateFlags model)
-        {
-            const string query = "update dbo.CrateFlags set name=@Cfname,ftype=@Cfstat,srtype=@Cflag where id=@Id";
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                query,
-                new SqlParameter("@id", model.Id),
-                new SqlParameter("@Cfname", model.Name),
-                new SqlParameter("@Cfstat", model.Ftype),
-                new SqlParameter("@Cflag", model.Srtype));
-
-            return true;
-        }
-        public async Task<bool> DeleteCrateFlagAsync(int id)
-        {
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                "DELETE CrateFlags WHERE id=@id",
-                new SqlParameter("@id", id));
-
-            return true;
-        }
-        public async Task<bool> DeleteCrateTypes(int id)
-        {
-            await _sql.ExecuteNonQueryAsync(
-               CommandType.Text,
-               "DELETE dbo.crtypes WHERE id=@id",
-               new SqlParameter("@id", id));
-
-            return true;
-        }
-        public async Task<bool> UpdateCratetypes(CrateType crateType)
-        {
-            await _sql.ExecuteNonQueryAsync(
-                CommandType.Text,
-                @"update dbo.crtypes set name=@Crname,Crqty=@Crqty where id=@Id",
-                new SqlParameter("@Id", crateType.Id),
-                new SqlParameter("@Crname", crateType.Name),
-                new SqlParameter("@Crqty", crateType.Crqty));
-
-            return true;
-        }
 
 
         public async Task<List<CompanyModel>> GetDailyCratesByDateAsync(DateTime from, DateTime to)
@@ -367,21 +263,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             return ds.Tables[0].Rows.Count == 0
                 ? 0
                 : Convert.ToInt32(ds.Tables[0].Rows[0]["cid"]);
-        }
-        public async Task<List<CompanyModel>> GetAllCrateMarksAsync()
-        {
-            using var ds = await _sql.ExecuteDatasetAsync(
-                 CommandType.Text,
-                 "SELECT DISTINCT CrateMark FROM Crateissue");
-            if (ds.Tables.Count == 0)
-                return new List<CompanyModel>();
-
-            return ds.Tables[0].AsEnumerable()
-                .Select(r => new CompanyModel
-                {
-                    CrissueMark = r["CrateMark"]?.ToString()
-                })
-                .ToList();
         }
         public async Task<List<CompanyModel>> GetDailyCratesAsync()
         {
@@ -1589,35 +1470,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             return GetDailyPreinward;
         }
 
-        public async Task<List<CrateModel>> GetCrateOrderNoAsync()
-        {
-            try
-            {
-                var list = new List<CrateModel>();
-
-                using var dt = await _sql.ExecuteDatasetAsync(
-                    "select max(cid) as cid from crateissue",
-                    CommandType.Text
-                );
-
-                if (dt.Tables.Count == 0)
-                    return list;
-
-                foreach (DataRow rdr in dt.Tables[0].Rows)
-                {
-                    list.Add(new CrateModel
-                    {
-                        CrissueId = rdr["cid"] != DBNull.Value ? Convert.ToInt32(rdr["cid"]) : 0
-                    });
-                }
-                return list;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in GetCrateOrderNoAsync: {ex.Message}");
-                throw;
-            }
-        }
         public async Task<List<CrateModel>> GetallCrateMarksAsync()
         {
             try

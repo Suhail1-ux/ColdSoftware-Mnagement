@@ -123,7 +123,8 @@ namespace ColdStoreManagement.Controllers
         [HttpGet("GetCrateOrderNo")]
         public async Task<IActionResult> GetCrateOrderNo()
         {
-            var result = await _crateService.GetCrateOrderNoAsync();
+            var maxId = await _crateService.GetMaxCrateIssueIdAsync();
+            var result = new List<CrateModel> { new CrateModel { CrissueId = maxId } };
             return Ok(result);
         }
 
