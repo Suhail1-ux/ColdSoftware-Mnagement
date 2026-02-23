@@ -29,6 +29,7 @@ namespace ColdStoreManagement.Configurations
             services.AddScoped<IBankingService, BankingService>();
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductQualityService, ProductQualityService>();
             services.AddScoped<IPackageService, PackageService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
