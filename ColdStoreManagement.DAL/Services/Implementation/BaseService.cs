@@ -77,6 +77,36 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             model.RetMessage = validation.RetMessage;
         }
 
+        protected async Task FillValidationAsync(VehicleDto model)
+        {
+            var validation = await _sql.ExecuteSingleAsync<VehicleDto>(
+                @"SELECT TOP 1 
+                    flag        AS RetFlag,
+                    remarks     AS RetMessage
+                FROM dbo.svalidate",
+                CommandType.Text);
+
+            if (validation == null) return;
+
+            model.RetFlag = validation.RetFlag;
+            model.RetMessage = validation.RetMessage;
+        }
+
+        protected async Task FillValidationAsync(ItemDto model)
+        {
+            var validation = await _sql.ExecuteSingleAsync<ItemDto>(
+                @"SELECT TOP 1 
+                    flag        AS RetFlag,
+                    remarks     AS RetMessage
+                FROM dbo.svalidate",
+                CommandType.Text);
+
+            if (validation == null) return;
+
+            model.RetFlag = validation.RetFlag;
+            model.RetMessage = validation.RetMessage;
+        }
+
         protected async Task FillValidationAsync(LoginResultModel model)
         {
             var result = await _sql.ExecuteSingleAsync<LoginResultModel>(
