@@ -30,6 +30,12 @@ namespace ColdStoreManagement.Configurations
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductQualityService, ProductQualityService>();
+
+            // Report Services
+            services.AddScoped<IPreinwardReportService, PreinwardReportService>();
+            services.AddScoped<IInwardReportService, InwardReportService>();
+            services.AddScoped<IQualityReportService, QualityReportService>();
+            services.AddScoped<IStockAggregateService, StockAggregateService>();
             services.AddScoped<IPackageService, PackageService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
