@@ -6,14 +6,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PackingDraftController : ControllerBase
+    public class PackingDraftController(IPackingDraftService packingDraftService) : ControllerBase
     {
-        private readonly IPackingDraftService _packingDraftService;
-
-        public PackingDraftController(IPackingDraftService packingDraftService)
-        {
-            _packingDraftService = packingDraftService;
-        }
+        private readonly IPackingDraftService _packingDraftService = packingDraftService;
 
         [HttpPost("ValidateDraftQty")]
         public async Task<IActionResult> ValidateDraftQty([FromBody] CompanyModel companyModel)

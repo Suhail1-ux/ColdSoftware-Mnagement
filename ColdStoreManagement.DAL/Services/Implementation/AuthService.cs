@@ -21,6 +21,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
         {
             if (model == null) return null;
 
+            // Call the stored procedure to validate the user credentials
             await _sql.ExecuteNonQueryAsync(
                 CommandType.StoredProcedure,
                 "checkuser",
@@ -29,13 +30,19 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 new SqlParameter("@unit", model.GlobalUnitName)
             );
 
-            var resut = new LoginResultModel()
+            var result = new LoginResultModel()
             {
                 GlobalUserName = model.GlobalUserName,
                 GlobalUnitName = model.GlobalUnitName,
             };
-            await FillValidationAsync(resut);
-            return resut;
+            // Fill the rest of the properties based on the stored procedure's output parameters or result set
+            await FillValidationAsync(result);
+            
+            // If login is successful, fetch the user ID
+            if (result.RetFlag.Trim().Equals("TRUE", StringComparison.OrdinalIgnoreCase))
+                result.GlobalUserId = await GetUserId(model.GlobalUserName);
+            
+            return result;
         }
 
         public string GenerateJwtToken(LoginResultModel user)
@@ -52,7 +59,8 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 new Claim(ClaimTypes.Name, user.GlobalUserName),
                 new Claim(ClaimTypes.Role, user.GlobalUserGroup),
                 new Claim(ClaimTypes.Sid, user.GlobalUnitId.ToString()),
-                new Claim("UnitName", user.GlobalUnitName ?? "")
+                new Claim("UnitName", user.GlobalUnitName ?? ""),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             // 3. Create the Token
@@ -64,8 +72,14 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 signingCredentials: creds
             );
 
+            // 4. Return the Token String
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        private async Task<int> GetUserId(string username)
+           => (await _sql.ExecuteScalarAsync<int>(
+               "select userid from users where username=rtrim(@Username) and status =1 and flagdeleted=0 ",
+               CommandType.Text,
+               new SqlParameter("@Username", username)));
 
         public async Task<CompanyModel?> UpdateUserPassword(
             UpdateUserPasswordRequest model)
@@ -87,6 +101,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 GlobalUserName = model.GlobalUserName,
                 GlobalUnitName = model.GlobalUnitName ?? string.Empty,
             };
+            // Fill the rest of the properties based on the stored procedure's output parameters or result set
             await FillValidationAsync(companyModel);
 
             return companyModel;
@@ -97,7 +112,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             string oldPassword,
             string newPassword)
         {
-
+            // Call the stored procedure to update the user password
             await _sql.ExecuteNonQueryAsync(
                 CommandType.StoredProcedure,
                 "UpdateuserPasswordcheck",
@@ -110,6 +125,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             {
                 GlobalUserName = username
             };
+            // Fill the rest of the properties based on the stored procedure's output parameters or result set
             await FillValidationAsync(companyModel);
 
             return companyModel;

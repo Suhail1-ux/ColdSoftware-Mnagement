@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ColdStoreManagement.BLL.Models.Company;
 using ColdStoreManagement.DAL.Services.Interface.TransactionsOut;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +6,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DemandOrderController : ControllerBase
+    public class DemandOrderController(IDemandOrderService demandOrderService) : ControllerBase
     {
-        private readonly IDemandOrderService _demandOrderService;
-
-        public DemandOrderController(IDemandOrderService demandOrderService)
-        {
-            _demandOrderService = demandOrderService;
-        }
+        private readonly IDemandOrderService _demandOrderService = demandOrderService;
 
         [HttpPost("UpdateLotOrderQuantity")]
         public async Task<IActionResult> UpdateLotOrderQuantity([FromBody] CompanyModel EditModel)

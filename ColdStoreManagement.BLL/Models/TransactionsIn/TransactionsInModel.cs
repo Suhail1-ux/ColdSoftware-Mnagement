@@ -23,6 +23,7 @@ namespace ColdStoreManagement.BLL.Models.TransactionsIn
         public decimal PreInwardQty { get; set; }
         public string? PreCrateType { get; set; }
         public int ServiceId { get; set; }
+        public string? Servicename { get; set; }
         public decimal StoreQty { get; set; } // Company Crates
         public decimal OwnQty { get; set; }   // Own Crates
         public string? PreInwardUom { get; set; }
@@ -31,7 +32,7 @@ namespace ColdStoreManagement.BLL.Models.TransactionsIn
         public string? TempGateInIrn { get; set; }
         public int TempGateInId { get; set; }
         public string? PreInIrn { get; set; }
-        public string? LotIrn { get; set; }
+        public string? LotIrn { get; set; }        
         public string? PreInwardStatus { get; set; }
 
         // Chamber Allocation Properties
@@ -66,7 +67,7 @@ namespace ColdStoreManagement.BLL.Models.TransactionsIn
         // Unit info
         public string? Unitname { get; set; }
         public int Capacity { get; set; }
-        public bool chamberstatus { get; set; }
+        public bool Chamberstatus { get; set; }
 
         // Quality Properties
         public int Lotno { get; set; }

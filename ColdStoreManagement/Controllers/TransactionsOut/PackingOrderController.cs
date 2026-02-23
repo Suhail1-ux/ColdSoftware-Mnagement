@@ -6,14 +6,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PackingOrderController : ControllerBase
+    public class PackingOrderController(IPackingOrderService packingOrderService) : ControllerBase
     {
-        private readonly IPackingOrderService _packingOrderService;
-
-        public PackingOrderController(IPackingOrderService packingOrderService)
-        {
-            _packingOrderService = packingOrderService;
-        }
+        private readonly IPackingOrderService _packingOrderService = packingOrderService;
 
         [HttpGet("GetPackingOrderPriv")]
         public async Task<IActionResult> GetPackingOrderPriv(string Ugroup)

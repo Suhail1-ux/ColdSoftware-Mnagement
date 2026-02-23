@@ -253,6 +253,11 @@ namespace ColdStoreManagement.DAL.Helper
                 // Fallback for types that Convert.ChangeType might struggle with (like Guid)
                 return (T)result;
             }
+            finally
+            { 
+                cmd.Parameters.Clear();
+                connection.Close();                
+            }
         }
 
         #endregion ---------- End ExecuteScalar ----------

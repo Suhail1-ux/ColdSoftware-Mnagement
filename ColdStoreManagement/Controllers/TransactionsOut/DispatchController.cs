@@ -6,14 +6,9 @@ namespace ColdStoreManagement.Controllers.TransactionsOut
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DispatchController : ControllerBase
+    public class DispatchController(IDispatchService dispatchService) : ControllerBase
     {
-        private readonly IDispatchService _dispatchService;
-
-        public DispatchController(IDispatchService dispatchService)
-        {
-            _dispatchService = dispatchService;
-        }
+        private readonly IDispatchService _dispatchService = dispatchService;
 
         [HttpGet("GetDispatchPriv")]
         public async Task<IActionResult> GetDispatchPriv(string Ugroup)

@@ -111,11 +111,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                             {
                                 // companyModel.Growerid = reader.GetInt32(reader.GetOrdinal("id")),
 
-
-
-
                                 Accountid = reader.GetInt32(reader.GetOrdinal("partycode")),
-
                                 AccountName = reader["partyname"] as string,
                                 AccountAddress = reader["address"] as string,
                                 AccountCity = reader["city"] as string,
@@ -149,7 +145,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
         public async Task<List<CompanyModel>> GetallAccountlist()
         {
             const string query = "select rtrim(subname) as subname from AccountSubGroups";
-            var ds = await _sql.ExecuteDatasetAsync(
+            using var ds = await _sql.ExecuteDatasetAsync(
                 CommandType.Text,
                 query);
 
@@ -188,9 +184,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                     CompanyModel companyModel = new CompanyModel
                     {
                         GrowerActive = rdr["status"].ToString()
-
-
-
                     };
                     Getstatuslist.Add(companyModel);
                 }
@@ -210,12 +203,12 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 await con.OpenAsync();
 
                 var sql = @"SELECT ISNULL((
-    SELECT TOP 1 u.username
-    FROM packingorderitems poi
-    LEFT JOIN users u ON poi.userid = u.userid
-    WHERE poi.packingorderid = @selectedcrn
-), '.') as username
-            ";
+                            SELECT TOP 1 u.username
+                            FROM packingorderitems poi
+                            LEFT JOIN users u ON poi.userid = u.userid
+                            WHERE poi.packingorderid = @selectedcrn
+                        ), '.') as username
+                                    ";
                 using (var cmd = new SqlCommand(sql, con))
                 {
                     cmd.Parameters.AddWithValue("@selectedcrn", selectedcrn);
@@ -246,8 +239,9 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
         public async Task<List<CompanyModel>> GetUserlist()
         {
-            const string query = "select rtrim(username) as username from users where userid in(select distinct userid from outward)";
-            var ds = await _sql.ExecuteDatasetAsync(
+            const string query = @"select rtrim(username) as username from users 
+                                    where userid in(select distinct userid from outward)";
+            using var ds = await _sql.ExecuteDatasetAsync(
                 CommandType.Text,
                 query);
 
@@ -353,12 +347,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                     // Make sure there are no extra spaces in parameter names!
                     cmd.Parameters.AddWithValue("@Usergroup", EditModel.UserGroupName);
                     cmd.Parameters.AddWithValue("@UsergroupRemarks", EditModel.UserGroupRemarks);
-
-
                     cmd.Parameters.AddWithValue("@Globalusername", EditModel.GlobalUserName);
-
-
-
                     await cmd.ExecuteNonQueryAsync();
                 }
 
@@ -395,12 +384,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
                     cmd.Parameters.AddWithValue("@userid", companyModel.Userid);
                     cmd.Parameters.AddWithValue("@Password", apassoword);
-
-
-
                     cmd.Parameters.AddWithValue("@Globalusername", companyModel.GlobalUserName);
-
-
 
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -437,10 +421,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                     cmd.Parameters.AddWithValue("@uname", loginModel.GlobalUserName);
                     cmd.Parameters.AddWithValue("@pwd", loginModel.UserPassword);
                     cmd.Parameters.AddWithValue("@unit", loginModel.GlobalUnitName);
-
-
-
-
 
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -667,17 +647,6 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                     cmd.Parameters.AddWithValue("@UserId", EditModel.UserId);
                     cmd.Parameters.AddWithValue("@Mid", EditModel.SubGroupId);
                     cmd.Parameters.AddWithValue("@SubAcgrp", EditModel.SubgroupName);
-
-
-
-
-
-
-
-
-
-
-
 
                     await cmd.ExecuteNonQueryAsync();
                 }

@@ -1,19 +1,16 @@
-using System.Data;
-using ColdStoreManagement.BLL.Models.TransactionsIn;
+﻿using ColdStoreManagement.BLL.Models.TransactionsIn;
+using ColdStoreManagement.DAL.Helper;
 using ColdStoreManagement.DAL.Services.Interface;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace ColdStoreManagement.DAL.Services.Implementation
 {
-    public class TransactionsInService : ITransactionsInService
+    public class TransactionsInService(SQLHelperCore sql,
+        IConfiguration configuration) : BaseService(sql), ITransactionsInService
     {
-        private readonly IConfiguration _configuration;
-
-        public TransactionsInService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private readonly IConfiguration _configuration = configuration;
 
         // --- Preinward Methods ---
 
@@ -163,11 +160,57 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             return results;
         }
 
-        public async Task<TransactionsInModel?> UpdatePreinwardHeadAsync(TransactionsInModel model)
+        public async Task<TransactionsInModel?> UpdatePreinwardHeadAsync(TransactionsInModel EditModel)
         {
-             // To implement based on EmployeeAdoNetService.UpdatePreinwardHead logic if needed. 
-             // Logic seems similar to AddPreinward but for updates.
-             return null;
+            if (EditModel == null)
+                return null;
+
+            using var con = new SqlConnection(_configuration.GetConnectionString("SqlDbContext"));
+            await con.OpenAsync();
+
+            using var transaction = con.BeginTransaction();
+
+            try
+            {
+                // Execute stored procedure
+                await _sql.ExecuteNonQueryAsync(                   
+                    CommandType.StoredProcedure,
+                    "UpdatePreinwardHead",
+                    transaction,
+                    new SqlParameter("@pdate", EditModel.PreinwardDate),
+                    new SqlParameter("@Partyname", EditModel.GrowerGroupName),
+                    new SqlParameter("@GrowerName", EditModel.GrowerName),
+                    new SqlParameter("@challanName", EditModel.ChallanName),
+                    new SqlParameter("@challanNo", EditModel.ChallanNo),
+                    new SqlParameter("@username", EditModel.GlobalUserName),
+                    new SqlParameter("@vehno", EditModel.Vehno),
+                    new SqlParameter("@Remarks", EditModel.PreInwardRemarks),
+                    new SqlParameter("@Pid", EditModel.PreInwardId)
+                );
+
+                // Fetch validation result (same transaction)
+                var dt = await _sql.ExecuteDatasetAsync(
+                    "SELECT TOP 1 flag,remarks FROM dbo.svalidate",
+                    CommandType.Text,
+                    transaction
+                );
+
+                if (dt.Tables[0].Rows.Count > 0)
+                {
+                    EditModel.RetFlag = dt.Tables[0].Rows[0]["flag"]?.ToString();
+                    EditModel.RetMessage = dt.Tables[0].Rows[0]["remarks"]?.ToString();
+                }
+
+                transaction.Commit();
+                return EditModel;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                EditModel.RetFlag = "FALSE";
+                EditModel.RetMessage = $"Error: {ex.Message}";
+                return EditModel;
+            }
         }
 
         public async Task<TransactionsInModel?> GetPreinwardIdAsync(int id)
@@ -198,11 +241,82 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             return model;
         }
 
-        public async Task<List<TransactionsInModel>> GetPreinwardIdlistAsync(int id)
+        public async Task<List<TransactionsInModel>> GetPreinwardIdlistAsync(int selectedGrowerId)
         {
-             // Simplified implementation based on pattern
-             return new List<TransactionsInModel>(); 
+            List<TransactionsInModel> GetDailyPreinwardView = new List<TransactionsInModel>();
+
+            const string query = @"SELECT ci.GateInId,ci.remarks,
+    ci.Lotno,
+    ci.PreInIrn,ci.LotIrn,ci.LocationChamberId,
+    ci.GateInDate,
+    p.partytypeid + '-' + p.partyname AS PartyName,
+    CONVERT(varchar(max), ps.partyid) +'-' + ps.partyname AS GrowerName,
+    CONVERT(varchar(max), cm.id) +'-' + cm.ChallanName AS ChallanName,
+    RTRIM(vi.vehno) +SPACE(1) + '(' + RTRIM(vi.drivername) + SPACE(1) + ')' + SPACE(1) + '(' + RTRIM(vi.contactno) + ')' AS vehno,
+    ci.qty,ci.sno,ci.createddate,ci.KhataName,ci.ChallanNo ,ur.uname,
+    ci.Remarks,prn.name as product,
+    ci.preInirn,ui.uname as username,pq.name as variety,ci.cratetype,st.sname,um.Ucode,pt.name,
+    
+    --New Status Field
+    CASE
+        WHEN EXISTS(
+            SELECT 1
+            FROM QualityControl qi
+            WHERE qi.LotNo = ci.LotNo
+        ) THEN 'Completed'
+        ELSE 'Pending'
+    END AS Status
+
+FROM GateInTrans ci
+LEFT JOIN party p ON ci.partyid = p.partyid
+LEFT JOIN partysub ps ON ci.growerid = ps.partyid
+LEFT JOIN challanmaster cm ON ci.challanid = cm.id
+LEFT JOIN vehinfo vi ON ci.vehid = vi.vid
+LEFT JOIN users ui ON ci.createdby = ui.id
+LEFT JOIN prodqaul pq ON ci.varietyid = pq.id
+LEFT JOIN servicetypes st ON ci.schemeid = st.id
+LEFT JOIN unit_master um ON ci.Unitid = um.id
+LEFT JOIN PTYPE pt ON ci.packageid = pt.id
+LEFT JOIN users ur ON ci.Createdby = ur.id
+LEFT JOIN prodtype prn ON ci.itemid = prn.id
+where ci.GateInId = @selectedGrowerId
+ORDER BY ci.GateInId DESC";
+
+            // Fetch validation result
+            var dt = await _sql.ExecuteDatasetAsync(
+                query,
+                CommandType.Text,
+                new SqlParameter("@selectedGrowerId", selectedGrowerId)
+            );
+
+            if (dt.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow rdr in dt.Tables[0].Rows)
+                {
+                    var companyModel = new TransactionsInModel
+                    {
+                        LotIrn = rdr["LotIrn"].ToString(),
+                        Itemname = rdr["Product"].ToString(),
+                        PreInwardUom = rdr["name"].ToString(),
+                        PreInwardQty = Convert.ToDecimal(rdr["qty"]),
+
+                        PreInwardKhata = rdr["KhataName"].ToString(),
+                        Servicename = rdr["sname"].ToString(),
+                        VarietyName = rdr["variety"].ToString(),
+
+                        PreCrateType = rdr["cratetype"].ToString(),
+
+                        ChamberId = Convert.ToInt32(rdr["LocationChamberId"]),
+                        Lotno = Convert.ToInt32(rdr["Lotno"]),
+
+                    };
+                    GetDailyPreinwardView.Add(companyModel);
+                }
+
+            }
+            return GetDailyPreinwardView;
         }
+
 
         public async Task<TransactionsInModel?> GeneratePreinwardAsync(TransactionsInModel model)
         {
