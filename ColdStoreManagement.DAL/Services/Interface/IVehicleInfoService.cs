@@ -1,5 +1,5 @@
 ﻿using ColdStoreManagement.BLL.Models;
-using ColdStoreManagement.BLL.Models.Company;
+using ColdStoreManagement.BLL.Models.DTOs;
 
 namespace ColdStoreManagement.DAL.Services.Interface
 {
@@ -7,10 +7,10 @@ namespace ColdStoreManagement.DAL.Services.Interface
     {
         Task<List<VehInfoModel>> GetAllVehGroup();
         Task<VehInfoModel?> Getvehid(int vehid);
-        Task<CompanyModel?> Addveh(VehInfoModel model);
-        Task<CompanyModel?> UpdateVeh(VehInfoModel model);
+        Task<VehicleDto?> Addveh(VehInfoModel model);
+        Task<VehicleDto?> UpdateVeh(VehInfoModel model);
         Task<bool> UpdatevehStatus(int id);
-        Task<CompanyModel?> DeleteVeh(int id, CompanyModel model);
-        Task<List<CompanyModel>> GetallItemGroup();
+        Task<VehicleDto?> DeleteVeh(int id, VehicleDto model);
+        Task<List<ItemDto>> GetallItemGroup();
     }
 }

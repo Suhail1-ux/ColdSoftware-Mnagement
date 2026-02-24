@@ -1,5 +1,5 @@
 ﻿using ColdStoreManagement.BLL.Models;
-using ColdStoreManagement.BLL.Models.Company;
+using ColdStoreManagement.BLL.Models.DTOs;
 using ColdStoreManagement.DAL.Helper;
 using ColdStoreManagement.DAL.Services.Interface;
 using Microsoft.Data.SqlClient;
@@ -59,7 +59,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 Vehtype = row["vehtype"]?.ToString()
             };
         }
-        public async Task<CompanyModel?> Addveh(VehInfoModel model)
+        public async Task<VehicleDto?> Addveh(VehInfoModel model)
         {
             if (model == null)
                 return null;
@@ -78,18 +78,18 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                  parameters);
 
             // Read validation result
-            var result = new CompanyModel()
+            var result = new VehicleDto()
             {
                 Vehno = model.Vehno,
                 VehDriver = model.VehDriver,
                 VehContact = model.VehContact,
-                Vehntype = model.Vehtype,
+                Vehtype = model.Vehtype,
                 Userid = model.Userid ?? 0
             };
             await FillValidationAsync(result);
             return result;
         }
-        public async Task<CompanyModel?> UpdateVeh(VehInfoModel model)
+        public async Task<VehicleDto?> UpdateVeh(VehInfoModel model)
         {
             if (model == null)
                 return null;
@@ -109,13 +109,14 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 parameters);
 
             // Read validation result
-            var result = new CompanyModel()
+            var result = new VehicleDto()
             {
                 Vehno = model.Vehno,
                 VehDriver = model.VehDriver,
                 VehContact = model.VehContact,
-                Vehntype = model.Vehtype,
-                Userid = model.Userid ?? 0
+                Vehtype = model.Vehtype,
+                Userid = model.Userid ?? 0,
+                Vehid = model.Vehid
             };
             await FillValidationAsync(result);
             return result;
@@ -129,7 +130,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
             return true;
         }
-        public async Task<CompanyModel?> DeleteVeh(int id, CompanyModel model)
+        public async Task<VehicleDto?> DeleteVeh(int id, VehicleDto model)
         {
             if (model == null)
                 return null;
@@ -143,7 +144,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
             await FillValidationAsync(model);
             return model;
         }
-        public async Task<List<CompanyModel>> GetallItemGroup()
+        public async Task<List<ItemDto>> GetallItemGroup()
         {
             const string sql = @"select 
                     b.mastername,
@@ -159,7 +160,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
                 where a.flagdeleted = 0
                 order by a.itemid";
 
-            var list = new List<CompanyModel>();
+            var list = new List<ItemDto>();
             using (var ds = await _sql.ExecuteDatasetAsync(CommandType.Text, sql))
             {
                 if (ds.Tables[0].Rows.Count == 0)
@@ -167,7 +168,7 @@ namespace ColdStoreManagement.DAL.Services.Implementation
 
                 foreach (DataRow row in ds.Tables[0].Rows)
                 {
-                    list.Add(new CompanyModel
+                    list.Add(new ItemDto
                     {
                         PurchGrp = row["mastername"]?.ToString(),
                         Itemid = Convert.ToInt32(row["itemid"]),

@@ -1,5 +1,5 @@
 ﻿using ColdStoreManagement.BLL.Models;
-using ColdStoreManagement.BLL.Models.Company;
+using ColdStoreManagement.BLL.Models.DTOs;
 using ColdStoreManagement.DAL.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -145,7 +145,7 @@ namespace ColdStoreManagement.Controllers
 
         // DELETE: api/VehicleInfo/DeleteVeh/5
         [HttpDelete("DeleteVeh/{id:int}")]
-        public async Task<IActionResult> DeleteVeh(int id, [FromBody] CompanyModel model)
+        public async Task<IActionResult> DeleteVeh(int id, [FromBody] VehicleDto model)
         {
             try
             {
